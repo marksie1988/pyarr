@@ -88,10 +88,11 @@ def test_lookup_movie_by_imdb_id(radarr_client: RadarrAPI):
 def test_add_movie(radarr_client: RadarrAPI):
     quality_profiles = radarr_client.get_quality_profile()
     movie_imdb = radarr_client.lookup_movie(term=f"imdb:{RADARR_IMDB}")
+    root_dir = radarr_client.get_root_folder()[0]["path"]
 
     data = radarr_client.add_movie(
         movie=movie_imdb[0],
-        root_dir="/defaults/",
+        root_dir=root_dir,
         quality_profile_id=quality_profiles[0]["id"],
         monitored=False,
         search_for_movie=False,
@@ -582,6 +583,15 @@ def test_post_command(radarr_client: RadarrAPI):
     # RefreshMovie
     data = radarr_client.post_command(
         name="RefreshMovie", movieId=radarr_client.get_movie()[0]["id"]
+    )
+    time.sleep(5)
+    result = radarr_client.get_command(id_=data["id"])
+    assert isinstance(data, dict)
+    assert result["message"] == "Completed"
+
+    # RescanMovie
+    data = radarr_client.post_command(
+        "RescanMovie", movieId=radarr_client.get_movie()[0]["id"]
     )
     time.sleep(5)
     result = radarr_client.get_command(id_=data["id"])

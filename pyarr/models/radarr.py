@@ -5,6 +5,7 @@ RadarrCommands = Literal[
     "MissingMoviesSearch",
     "MoviesSearch",
     "RefreshMovie",
+    "RescanMovie",
     "RenameMovie",
     "RenameFiles",
     "Backup",
